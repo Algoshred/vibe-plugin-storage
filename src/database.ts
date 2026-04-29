@@ -34,6 +34,13 @@ export interface AgentDatabaseCreateOptions {
    * the registry entirely. Tests use this to swap in an in-memory adapter.
    */
   adapterFactory?: AgentStorageAdapterFactory;
+  /**
+   * Free-form adapter knobs forwarded verbatim. The agent never interprets
+   * these — they go directly to the chosen adapter's factory under
+   * `opts.adapterOptions`. Example for postgres:
+   *   { connectionString: "postgres://user:pass@host:5432/db" }
+   */
+  adapterOptions?: Readonly<Record<string, string>>;
 }
 
 async function resolveFactory(
@@ -64,10 +71,31 @@ async function resolveFactory(
     return factory;
   }
 
-  const factory = getAdapter(name);
+  let factory = getAdapter(name);
+  if (!factory) {
+    // Lazy-load known well-known adapter packages by name, so the host
+    // (the agent) doesn't need to statically import any specific
+    // provider — it only depends on this meta plugin. Anything else
+    // requires the operator to install + import the adapter package
+    // before calling createAgentDatabase().
+    const wellKnown: Record<string, string> = {
+      skalex: "@vibecontrols/vibe-plugin-storage-skalex",
+      postgres: "@vibecontrols/vibe-plugin-storage-postgres",
+      postgresql: "@vibecontrols/vibe-plugin-storage-postgres",
+    };
+    const candidate = wellKnown[name];
+    if (candidate) {
+      try {
+        await import(candidate);
+        factory = getAdapter(name);
+      } catch {
+        /* fall through to the descriptive error below */
+      }
+    }
+  }
   if (!factory) {
     throw new Error(
-      `Unknown storage adapter: "${name}". Registered adapters: ${listAdapters().join(", ") || "(none — did you import @vibecontrols/vibe-plugin-storage-skalex?)"}`,
+      `Unknown storage adapter: "${name}". Registered adapters: ${listAdapters().join(", ") || `(none — did you install @vibecontrols/vibe-plugin-storage-${name})?`}`,
     );
   }
   return factory;
@@ -92,5 +120,9 @@ export async function createAgentDatabase(
     );
   }
   const factory = await resolveFactory(options);
-  return factory({ dataDir: options.dbPath, encryptionKey: options.encryptionKey });
+  return factory({
+    dataDir: options.dbPath,
+    encryptionKey: options.encryptionKey,
+    adapterOptions: options.adapterOptions,
+  });
 }

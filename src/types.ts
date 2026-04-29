@@ -78,6 +78,14 @@ export interface Notification {
 export interface AgentStorageAdapterOptions {
   dataDir: string;
   encryptionKey: string;
+  /**
+   * Free-form, adapter-interpreted knobs forwarded by the host. The agent
+   * does NOT interpret these — adapters pick out the keys they care
+   * about. Example: postgres reads `connectionString`; an S3-backed
+   * adapter might read `bucket` + `region`. Keeps the agent decoupled
+   * from any backend's specifics.
+   */
+  adapterOptions?: Readonly<Record<string, string>>;
 }
 
 /**
