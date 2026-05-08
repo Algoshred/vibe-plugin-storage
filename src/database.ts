@@ -115,9 +115,7 @@ export async function createAgentDatabase(
     );
   }
   if (!options.dbPath) {
-    throw new Error(
-      "createAgentDatabase(): dbPath is required.",
-    );
+    throw new Error("createAgentDatabase(): dbPath is required.");
   }
   const factory = await resolveFactory(options);
   return factory({

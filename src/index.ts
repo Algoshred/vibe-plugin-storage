@@ -10,7 +10,18 @@
  * Concrete storage providers (e.g. @vibecontrols/vibe-plugin-storage-skalex)
  * call `registerAdapter("name", factory)` on import. The agent then calls
  * `createAgentDatabase({ dbPath, encryptionKey })` to get an adapter instance.
+ *
+ * The default Skalex adapter is auto-registered as a side effect of
+ * importing this package, so the agent never has to depend on the
+ * skalex package directly. Override at runtime via VIBE_STORAGE_ADAPTER
+ * or pass `adapterFactory` to `createAgentDatabase()`.
  */
+
+import { createSkalexAgentDatabase } from "@vibecontrols/vibe-plugin-storage-skalex";
+import { registerAdapter as registerAdapterImpl } from "./registry.js";
+
+// Auto-register the bundled Skalex adapter.
+registerAdapterImpl("skalex", createSkalexAgentDatabase);
 
 export {
   AgentDatabase,

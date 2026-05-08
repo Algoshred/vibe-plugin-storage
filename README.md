@@ -14,7 +14,10 @@ Defines the storage contract that the agent uses to persist its state, and the a
 ## Example: registering a custom adapter
 
 ```ts
-import { registerAdapter, AgentDatabase } from "@vibecontrols/vibe-plugin-storage";
+import {
+  registerAdapter,
+  AgentDatabase,
+} from "@vibecontrols/vibe-plugin-storage";
 
 class MyPostgresAdapter extends AgentDatabase {
   // implement 45 methods…
