@@ -67,7 +67,7 @@ export const createPlugin: VibePluginFactory = (
   _ctx: ProfileContext,
 ): VibeStoragePlugin => ({
   name: "storage",
-  version: "2026.508.4",
+  version: "2026.508.5",
   description:
     "Storage facade — owns AgentDatabase contract and adapter registry",
   tags: ["backend", "adapter"],
