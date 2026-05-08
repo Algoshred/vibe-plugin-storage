@@ -1,0 +1,16 @@
+- generic [ref=e2]:
+    - heading "502 â€” Upstream Service Unavailable" [level=1] [ref=e3]
+    - paragraph [ref=e4]: The backend service is not running or not reachable.
+    - separator [ref=e5]
+    - generic [ref=e6]:
+        - strong [ref=e7]: "Common fixes:"
+        - list [ref=e8]:
+            - listitem [ref=e9]:
+                - text: "For tooling services (Harbor, Hive, Verdaccio, OpenBao):"
+                - code [ref=e10]: make -C ~/products/dev/k8 forward
+            - listitem [ref=e11]:
+                - text: "For dev services (gateways, app shells):"
+                - code [ref=e12]: make -C ~/products/dev docker-up
+            - listitem [ref=e13]:
+                - text: "Check service status:"
+                - code [ref=e14]: make -C ~/products/dev/k8 forward-status

@@ -23,6 +23,58 @@ import { registerAdapter as registerAdapterImpl } from "./registry.js";
 // Auto-register the bundled Skalex adapter.
 registerAdapterImpl("skalex", createSkalexAgentDatabase);
 
+/**
+ * Minimal facade of the agent's ProfileContext. The plugin has no hard
+ * dependency on the agent package; it accepts whichever shape the agent
+ * passes that is structurally compatible with this interface.
+ */
+export interface ProfileContext {
+  name: string;
+  dataDir: string;
+  logger: {
+    info: (...args: unknown[]) => void;
+    warn: (...args: unknown[]) => void;
+    error: (...args: unknown[]) => void;
+    debug: (...args: unknown[]) => void;
+  };
+  audit?: {
+    emit: (event: string, payload?: unknown) => void;
+  };
+}
+
+/**
+ * Minimal VibePlugin shape this meta package returns from its
+ * createPlugin(ctx) factory. The storage facade has no routes / CLI /
+ * lifecycle hooks of its own — it ships solely so concrete adapters
+ * (Skalex, Postgres) can register themselves on import. The factory is
+ * required to satisfy Plugin Contract v2 in the agent's loader.
+ */
+export interface VibeStoragePlugin {
+  name: string;
+  version: string;
+  description: string;
+  tags?: ReadonlyArray<string>;
+}
+
+export type VibePluginFactory = (ctx: ProfileContext) => VibeStoragePlugin;
+
+/**
+ * Plugin Contract v2 factory. Returns a no-op meta plugin record; all
+ * actual storage capability is exposed via the named exports below
+ * (registerAdapter / createAgentDatabase / AgentDatabase).
+ */
+export const createPlugin: VibePluginFactory = (
+  _ctx: ProfileContext,
+): VibeStoragePlugin => ({
+  name: "storage",
+  version: "2026.508.4",
+  description:
+    "Storage facade — owns AgentDatabase contract and adapter registry",
+  tags: ["backend", "adapter"],
+});
+
+export default createPlugin;
+
 export {
   AgentDatabase,
   type AgentStorageAdapterFactory,
