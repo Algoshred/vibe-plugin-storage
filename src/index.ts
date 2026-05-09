@@ -40,7 +40,7 @@ import { registerAdapter as registerAdapterImpl } from "./registry.js";
 registerAdapterImpl("skalex", createSkalexAgentDatabase);
 
 const PLUGIN_NAME = "storage";
-const PLUGIN_VERSION = "2026.509.2";
+const PLUGIN_VERSION = "2026.509.5";
 
 /**
  * Plugin Contract v2 factory. Returns a meta plugin that has no routes
@@ -79,23 +79,6 @@ export const createPlugin: VibePluginFactory = (
     onServerStart: lifecycle.onServerStart,
     onServerStop: lifecycle.onServerStop,
   };
-};
-
-/**
- * Static manifest export — kept for the agent's defensive plugin loader
- * that reads `vibePlugin` directly without invoking the factory.
- * Lifecycle hooks here are no-ops; real registration happens via the
- * factory above.
- */
-export const vibePlugin: VibePlugin = {
-  name: PLUGIN_NAME,
-  version: PLUGIN_VERSION,
-  description:
-    "Storage facade — owns AgentDatabase contract and adapter registry",
-  tags: ["backend", "adapter"],
-  capabilities: {
-    storage: "rw",
-  },
 };
 
 export default createPlugin;
