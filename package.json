@@ -1,6 +1,6 @@
 {
   "name": "@vibecontrols/vibe-plugin-storage",
-  "version": "2026.509.6",
+  "version": "2026.509.7",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@vibecontrols/plugin-sdk": "2026.509.1",
-    "@vibecontrols/vibe-plugin-storage-skalex": "2026.509.4"
+    "@vibecontrols/vibe-plugin-storage-skalex": "2026.509.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
