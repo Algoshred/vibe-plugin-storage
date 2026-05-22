@@ -109,6 +109,16 @@ export abstract class AgentDatabase {
   abstract close(): Promise<void>;
   abstract getDbPath(): string;
 
+  // ── Backup ──────────────────────────────────────────────────────────
+
+  /**
+   * Snapshot the entire data store into a single file at `targetPath`.
+   * Adapters that wrap a single-file engine (SQLite) MAY emit that file
+   * directly; adapters that store many files (Skalex) MUST emit a
+   * deterministic archive (e.g. tar.gz) so callers can hash + upload it.
+   */
+  abstract backup(targetPath: string): Promise<void>;
+
   // ── Task Methods ────────────────────────────────────────────────────
 
   abstract createTask(
