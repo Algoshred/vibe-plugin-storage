@@ -73,6 +73,17 @@ export const createPlugin: VibePluginFactory = (
     description:
       "Storage facade — owns AgentDatabase contract and adapter registry",
     tags: ["backend", "adapter"],
+    metaProviders: [
+      {
+        packageName: "@vibecontrols/vibe-plugin-storage-skalex",
+        pluginName: "storage-skalex",
+        defaultOn: ["linux", "darwin", "win32"],
+      },
+      {
+        packageName: "@vibecontrols/vibe-plugin-storage-postgres",
+        pluginName: "storage-postgres",
+      },
+    ],
     capabilities: {
       storage: "rw",
     },
