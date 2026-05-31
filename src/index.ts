@@ -29,6 +29,9 @@ import {
   type VibePlugin,
   type VibePluginFactory,
 } from "@vibecontrols/plugin-sdk/contract";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join as joinPath } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createLifecycleHooks } from "@vibecontrols/plugin-sdk/lifecycle";
 import { BoundLogger } from "@vibecontrols/plugin-sdk/log";
 import { TelemetryEmitter } from "@vibecontrols/plugin-sdk/telemetry";
@@ -40,7 +43,37 @@ import { registerAdapter as registerAdapterImpl } from "./registry.js";
 registerAdapterImpl("skalex", createSkalexAgentDatabase);
 
 const PLUGIN_NAME = "storage";
-const PLUGIN_VERSION = "2026.509.5";
+const PLUGIN_PACKAGE_NAME = "@vibecontrols/vibe-plugin-storage";
+const PLUGIN_VERSION = getPluginVersion();
+
+function getPluginVersion(): string {
+  try {
+    let dir = dirname(fileURLToPath(import.meta.url));
+    for (let i = 0; i < 10 && dir && dir !== dirname(dir); i++) {
+      const pkgPath = joinPath(dir, "package.json");
+      if (existsSync(pkgPath)) {
+        try {
+          const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as {
+            name?: string;
+            version?: string;
+          };
+          if (
+            pkg.name === PLUGIN_PACKAGE_NAME &&
+            typeof pkg.version === "string"
+          ) {
+            return pkg.version;
+          }
+        } catch {
+          /* malformed package.json — keep walking up */
+        }
+      }
+      dir = dirname(dir);
+    }
+  } catch {
+    /* fall through */
+  }
+  return "0.0.0";
+}
 
 /**
  * Plugin Contract v2 factory. Returns a meta plugin that has no routes
