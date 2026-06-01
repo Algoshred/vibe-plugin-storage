@@ -25,6 +25,7 @@
 
 import {
   type HostServices,
+  type MetaProviderRef,
   type ProfileContext,
   type VibePlugin,
   type VibePluginFactory,
@@ -34,6 +35,7 @@ import { dirname, join as joinPath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createLifecycleHooks } from "@vibecontrols/plugin-sdk/lifecycle";
 import { BoundLogger } from "@vibecontrols/plugin-sdk/log";
+import { provisionMetaProviders } from "@vibecontrols/plugin-sdk/providers";
 import { TelemetryEmitter } from "@vibecontrols/plugin-sdk/telemetry";
 
 import { createSkalexAgentDatabase } from "@vibecontrols/vibe-plugin-storage-skalex";
@@ -76,6 +78,22 @@ function getPluginVersion(): string {
 }
 
 /**
+ * Provider packages this meta routes to + per-platform defaults. The meta —
+ * not the agent — installs/loads/prereqs/elects them via `provisionProviders`.
+ */
+const STORAGE_PROVIDERS: ReadonlyArray<MetaProviderRef> = [
+  {
+    packageName: "@vibecontrols/vibe-plugin-storage-skalex",
+    pluginName: "storage-skalex",
+    defaultOn: ["linux", "darwin", "win32"],
+  },
+  {
+    packageName: "@vibecontrols/vibe-plugin-storage-postgres",
+    pluginName: "storage-postgres",
+  },
+];
+
+/**
  * Plugin Contract v2 factory. Returns a meta plugin that has no routes
  * or CLI surface of its own — actual storage capability is exposed via
  * the named exports below (registerAdapter / createAgentDatabase /
@@ -106,17 +124,9 @@ export const createPlugin: VibePluginFactory = (
     description:
       "Storage facade — owns AgentDatabase contract and adapter registry",
     tags: ["backend", "adapter"],
-    metaProviders: [
-      {
-        packageName: "@vibecontrols/vibe-plugin-storage-skalex",
-        pluginName: "storage-skalex",
-        defaultOn: ["linux", "darwin", "win32"],
-      },
-      {
-        packageName: "@vibecontrols/vibe-plugin-storage-postgres",
-        pluginName: "storage-postgres",
-      },
-    ],
+    metaProviders: STORAGE_PROVIDERS,
+    provisionProviders: (hostServices: HostServices) =>
+      provisionMetaProviders(hostServices, STORAGE_PROVIDERS),
     capabilities: {
       storage: "rw",
     },
