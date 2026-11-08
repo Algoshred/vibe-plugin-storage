@@ -58,10 +58,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/algoshred/vibe-plugin-storage.git"
+    "url": "git+https://github.com/Algoshred/vibe-plugin-storage.git"
   },
   "bugs": {
-    "url": "https://github.com/algoshred/vibe-plugin-storage/issues"
+    "url": "https://github.com/Algoshred/vibe-plugin-storage/issues"
   },
   "homepage": "https://vibecontrols.com",
   "publishConfig": {
