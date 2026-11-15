@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@vibecontrols/plugin-sdk": "2026.601.1",
-    "@vibecontrols/vibe-plugin-storage-skalex": "2026.509.5"
+    "@vibecontrols/vibe-plugin-storage-skalex": "2026.510.1"
   },
   "devDependencies": {
     "@burdenoff/toolchain": "2026.1107.14",
